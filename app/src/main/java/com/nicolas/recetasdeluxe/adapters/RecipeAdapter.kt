@@ -10,7 +10,7 @@ import com.nicolas.recetasdeluxe.utils.TaskDiffUtil
 
 class RecipeAdapter(
     var items: List<Recipe>,
-    val onItemClick: (position: Int) -> Unit
+    val onItemClick: (recipe: Recipe) -> Unit
 ) : RecyclerView.Adapter<RecipeViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -23,7 +23,7 @@ class RecipeAdapter(
         val recipe = items[position]
         holder.render(recipe)
         holder.binding.recipeCard.setOnClickListener {
-            onItemClick(position)
+            onItemClick(recipe)
         }
     }
 

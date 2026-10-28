@@ -11,8 +11,8 @@ interface RecipesAPI {
     @GET("recipes")
     suspend fun getRecipesList(): RecipeResponse
 
-    @GET("recipe")
-    suspend fun getRecipesByID(@Query("id") recipeId: Int): Recipe
+    @GET("recipes/{id}")
+    suspend fun getRecipesByID(@Path("id") recipeId: Int): Recipe
 
     companion object{
 

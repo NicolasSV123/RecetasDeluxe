@@ -3,4 +3,5 @@
     <string name="app_name">Recetas Deluxe</string>
     <string name="menu_search">Buscar</string>
     <string name="menu_filter">Filtrar</string>
+    <string name="menu_favorite" />
 </resources>

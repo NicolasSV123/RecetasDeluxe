@@ -40,10 +40,26 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        //Barra de navegacion inferior
+        // Marcamos como activo el icono de Inicio
+        binding.bottomNavigationView.selectedItemId = R.id.menu_home
 
-        adapter = RecipeAdapter(recipeList) { position ->
-            val recipe = filteredRecipeList[position]
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_home -> true // Ya estamos aquí
+                R.id.menu_favorite -> {
+                    startActivity(Intent(this, FavoriteActivity::class.java))
+                    true
+                }
+                R.id.menu_add_recipe -> {
+                    startActivity(Intent(this, OriginalRecipesActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
 
+        adapter = RecipeAdapter(recipeList) { recipe ->
             val intent = Intent(this, DetailActivity::class.java)
             intent.putExtra(DetailActivity.EXTRA_RECIPE, recipe.id)
             startActivity(intent)
