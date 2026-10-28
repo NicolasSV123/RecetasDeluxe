@@ -1,4 +1,9 @@
 package com.nicolas.recetasdeluxe.activities
 
-class DetailActivity {
+import androidx.appcompat.app.AppCompatActivity
+
+class DetailActivity: AppCompatActivity() {
+    companion object{
+        const val EXTRA_RECIPE = "recipe"
+    }
 }

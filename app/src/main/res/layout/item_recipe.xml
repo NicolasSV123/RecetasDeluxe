@@ -45,7 +45,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:padding="12dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -59,7 +59,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="2dp">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/countryChip"
@@ -80,6 +81,49 @@
                         android:layout_height="wrap_content"
                         android:text="180 minutos ⏱️"
                         android:textSize="16sp"
+                        android:enabled="false"
+                        app:ensureMinTouchTargetSize="false"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:padding="2dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/difficultyChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Easy"
+                        android:enabled="false"
+                        app:ensureMinTouchTargetSize="false"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/caloriesChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="300 cal"
+                        android:enabled="false"
+                        app:ensureMinTouchTargetSize="false"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/servingsChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4 👤"
                         android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
