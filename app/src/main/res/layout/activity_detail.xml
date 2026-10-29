@@ -221,7 +221,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/playButton"
+            android:id="@+id/youtubeButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -233,7 +233,7 @@
             android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/shareButton"
+            android:id="@+id/googleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

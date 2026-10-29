@@ -1,5 +1,7 @@
 package com.nicolas.recetasdeluxe.activities
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -81,5 +83,21 @@ class DetailActivity: AppCompatActivity() {
         binding.instructionsTextView.text = recipe.instructions.mapIndexed { index, instruction ->
             "${index + 1}. $instruction"
         }.joinToString(separator = "\n\n")
+
+        binding.youtubeButton.setOnClickListener {
+            val query = "recipes ${recipe.name} receta"
+            val encodedQuery = android.net.Uri.encode(query)
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.youtube.com/results?search_query=$encodedQuery")
+            )
+            startActivity(intent)
+        }
+        binding.googleButton.setOnClickListener {
+            val query = "recipes ${recipe.name} receta"
+            val encodedQuery = android.net.Uri.encode(query)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$encodedQuery"))
+            startActivity(intent)
+        }
     }
 }
