@@ -1,6 +1,7 @@
 package com.nicolas.recetasdeluxe.activities
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipesAPI
 import com.nicolas.recetasdeluxe.databinding.ActivityDetailBinding
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,6 +47,11 @@ class DetailActivity: AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_detail_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -57,5 +64,22 @@ class DetailActivity: AppCompatActivity() {
 
     fun loadData(){
         supportActionBar?.title = recipe.name
+
+        Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
+
+
+
+        binding.prepTimeMinutesChip.text = getString(R.string.preparation_minutes, recipe.prepTimeMinutes)
+        binding.cookTimeMinutesChip.text = getString(R.string.cook_minutes, recipe.cookTimeMinutes)
+        binding.caloriesChip.text = getString(R.string.recipe_calories, recipe.caloriesPerServing)
+        binding.servingsChip.text = getString(R.string.recipe_servings, recipe.servings)
+
+        binding.ingredientsTextView.text = recipe.ingredients.joinToString(separator = "\n") { ingredient ->
+            "• $ingredient"
+        }
+
+        binding.instructionsTextView.text = recipe.instructions.mapIndexed { index, instruction ->
+            "${index + 1}. $instruction"
+        }.joinToString(separator = "\n\n")
     }
 }

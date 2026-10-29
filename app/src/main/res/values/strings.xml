@@ -2,5 +2,13 @@
     <string name="app_name">Deluxe Recipes</string>
     <string name="menu_search">Search</string>
     <string name="menu_filter">Filter</string>
-    <string name="menu_favorite" />
+    <string name="menu_favorite">Favorite</string>
+    <string name="recipe_calories">%1$d calories</string>
+    <string name="recipe_servings">%1$d 👤</string>
+    <string name="recipe_time">%1$d minutes ⏱️</string>
+    <string name="preparation_time">Preparation time:</string>
+    <string name="preparation_minutes">%1$d minutes🔨</string>
+    <string name="cook_minutes">%1$d minutes🔥</string>
+    <string name="energy_value">Energy value and portions per person:\n</string>
+    <string name="details">Details</string>"
 </resources>

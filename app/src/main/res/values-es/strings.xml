@@ -3,5 +3,13 @@
     <string name="app_name">Recetas Deluxe</string>
     <string name="menu_search">Buscar</string>
     <string name="menu_filter">Filtrar</string>
-    <string name="menu_favorite" />
+    <string name="menu_favorite">Favorito</string>
+    <string name="recipe_calories">%1$d calorías</string>
+    <string name="recipe_servings">%1$d 👤</string>
+    <string name="recipe_time">%1$d minutos ⏱️</string>
+    <string name="preparation_time">Tiempo de preparación:</string>
+    <string name="preparation_minutes">%1$d minutos🔨</string>
+    <string name="cook_minutes">%1$d minutos🔥</string>
+    <string name="energy_value">Energy value and portions per person:\n</string>
+    <string name="details">Detalles</string>"
 </resources>

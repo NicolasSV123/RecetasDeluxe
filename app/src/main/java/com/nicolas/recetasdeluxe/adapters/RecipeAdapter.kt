@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.databinding.ItemRecipeBinding
 import com.nicolas.recetasdeluxe.utils.TaskDiffUtil
+import com.squareup.picasso.Picasso
 
 class RecipeAdapter(
     var items: List<Recipe>,
@@ -39,6 +41,16 @@ class RecipeAdapter(
 
 class RecipeViewHolder(val binding: ItemRecipeBinding) : RecyclerView.ViewHolder(binding.root){
     fun render(recipe: Recipe){
+        val context = itemView.context
         binding.nameRecipeTextView.text = recipe.name
+        binding.countryChip.text = recipe.cuisine
+        binding.difficultyChip.text = recipe.difficulty
+        binding.caloriesChip.text = context.getString(R.string.recipe_calories, recipe.caloriesPerServing)
+        binding.servingsChip.text = context.getString(R.string.recipe_servings, recipe.servings)
+
+        val totalTimeMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes
+        binding.timeChip.text = context.getString(R.string.recipe_time, totalTimeMinutes)
+
+        Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
     }
 }

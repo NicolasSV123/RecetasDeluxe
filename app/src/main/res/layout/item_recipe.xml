@@ -66,8 +66,9 @@
                         android:id="@+id/countryChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:text="🇪🇸  Country"
-                        android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
                     <Space
@@ -79,9 +80,10 @@
                         android:id="@+id/timeChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:text="180 minutos ⏱️"
                         android:textSize="16sp"
-                        android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
                 </LinearLayout>
@@ -97,8 +99,9 @@
                         android:id="@+id/difficultyChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:text="Easy"
-                        android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
                     <Space
@@ -110,8 +113,9 @@
                         android:id="@+id/caloriesChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:text="300 cal"
-                        android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
                     <Space
@@ -123,8 +127,9 @@
                         android:id="@+id/servingsChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:text="4 👤"
-                        android:enabled="false"
                         app:ensureMinTouchTargetSize="false"/>
 
                 </LinearLayout>
