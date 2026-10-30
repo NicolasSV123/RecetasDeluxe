@@ -85,7 +85,7 @@ class DetailActivity: AppCompatActivity() {
         }.joinToString(separator = "\n\n")
 
         binding.youtubeButton.setOnClickListener {
-            val query = "recipes ${recipe.name} receta"
+            val query = "${recipe.name} recipes"
             val encodedQuery = android.net.Uri.encode(query)
             val intent = Intent(
                 Intent.ACTION_VIEW,
@@ -94,7 +94,7 @@ class DetailActivity: AppCompatActivity() {
             startActivity(intent)
         }
         binding.googleButton.setOnClickListener {
-            val query = "recipes ${recipe.name} receta"
+            val query = "${recipe.name} recipes"
             val encodedQuery = android.net.Uri.encode(query)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$encodedQuery"))
             startActivity(intent)

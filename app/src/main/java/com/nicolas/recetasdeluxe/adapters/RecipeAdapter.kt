@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.databinding.ItemRecipeBinding
-import com.nicolas.recetasdeluxe.utils.TaskDiffUtil
+import com.nicolas.recetasdeluxe.utils.RecipeDiffUtil
 import com.squareup.picasso.Picasso
 
 class RecipeAdapter(
@@ -32,7 +32,7 @@ class RecipeAdapter(
     override fun getItemCount(): Int = items.size
 
     fun updateData(dataSet: List<Recipe>) {
-        val diffCallbacks = TaskDiffUtil(items, dataSet)
+        val diffCallbacks = RecipeDiffUtil(items, dataSet)
         val diffResults = DiffUtil.calculateDiff(diffCallbacks)
         items = dataSet
         diffResults.dispatchUpdatesTo(this)

@@ -3,7 +3,7 @@ package com.nicolas.recetasdeluxe.utils
 import androidx.recyclerview.widget.DiffUtil
 import com.nicolas.recetasdeluxe.data.Recipe
 
-class TaskDiffUtil(val oldList: List<Recipe>, val newList: List<Recipe>) : DiffUtil.Callback() {
+class RecipeDiffUtil(val oldList: List<Recipe>, val newList: List<Recipe>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int = newList.size
