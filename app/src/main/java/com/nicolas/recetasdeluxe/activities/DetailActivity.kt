@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+// Pantalla de detalle para mostrar toda la informacion de una receta seleccionada
 class DetailActivity: AppCompatActivity() {
     companion object{
         const val EXTRA_RECIPE = "recipe"
@@ -46,6 +47,7 @@ class DetailActivity: AppCompatActivity() {
 
         recipeDAO = RecipeDAO(this)
 
+        // Obtenemos el ID de la receta enviado por el Intent y descargamos sus datos de la API
         val id = intent.getIntExtra(EXTRA_RECIPE, -1)
         val api = RecipesAPI.getInstance()
         CoroutineScope(Dispatchers.IO).launch{
@@ -56,6 +58,7 @@ class DetailActivity: AppCompatActivity() {
         }
     }
 
+    // Inflamos el menu superior que contiene el icono del corazon de favoritos
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_detail_menu, menu)
         favoriteMenuItem = menu.findItem(R.id.menu_favorite)
@@ -63,14 +66,16 @@ class DetailActivity: AppCompatActivity() {
         return true
     }
 
+    // Gestionamos las acciones de los botones de la barra superior (Atras y Favorito)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                finish()
+                finish() // Cierra la pantalla y vuelve atras
                 return true
             }
             R.id.menu_favorite -> {
                 if (::recipe.isInitialized) {
+                    // Si ya era favorita la borramos de SQLite, si no, la guardamos
                     if (isFavorite) {
                         recipeDAO.deleteFavorite(recipe.id)
                         isFavorite = false
@@ -86,6 +91,7 @@ class DetailActivity: AppCompatActivity() {
         }
     }
 
+    // Actualiza la imagen del icono de favoritos en la barra superior segun si es favorita o no
     private fun updateFavoriteIcon() {
         favoriteMenuItem?.let { item ->
             val iconRes = if (isFavorite) R.drawable.ic_favorite_added else R.drawable.ic_favorite_empty
@@ -94,10 +100,11 @@ class DetailActivity: AppCompatActivity() {
         }
     }
 
+    // Rellenamos todos los componentes visuales con la informacion de la receta
     fun loadData(){
         supportActionBar?.title = recipe.name
 
-        // Comprobar si esta receta es favorita en SQLite
+        // Comprobamos en SQLite si esta receta ya es favorita
         isFavorite = recipeDAO.isFavorite(recipe.id)
         updateFavoriteIcon()
 
@@ -116,6 +123,7 @@ class DetailActivity: AppCompatActivity() {
             "${index + 1}. $instruction"
         }.joinToString(separator = "\n\n")
 
+        // Boton para buscar videos de la receta en YouTube
         binding.youtubeButton.setOnClickListener {
             val query = "${recipe.name} recipes"
             val encodedQuery = Uri.encode(query)
@@ -125,6 +133,8 @@ class DetailActivity: AppCompatActivity() {
             )
             startActivity(intent)
         }
+
+        // Boton para buscar la receta en Google
         binding.googleButton.setOnClickListener {
             val query = "${recipe.name} recipes"
             val encodedQuery = Uri.encode(query)

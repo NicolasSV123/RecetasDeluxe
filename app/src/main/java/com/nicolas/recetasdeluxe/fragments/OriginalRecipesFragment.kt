@@ -16,6 +16,7 @@ import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.databinding.ActivityOriginalRecipesBinding
 import com.nicolas.recetasdeluxe.databinding.DialogAddRecipeBinding
 
+// Fragment encargado de mostrar, crear, editar y borrar tus propias recetas locales
 class OriginalRecipesFragment : Fragment() {
 
     private var _binding: ActivityOriginalRecipesBinding? = null
@@ -38,16 +39,18 @@ class OriginalRecipesFragment : Fragment() {
 
         recipeDAO = RecipeDAO(requireContext())
 
+        // Configuramos el adaptador con acciones para ver, editar o borrar cada receta propia
         adapter = OriginalRecipeAdapter(
             items = recipeList,
-            onItemClick = { recipe -> showViewRecipeDialog(recipe) },
-            onEditClick = { recipe -> showRecipeDialog(recipe) },
-            onDeleteClick = { recipe -> showDeleteConfirmationDialog(recipe) }
+            onItemClick = { recipe -> showViewRecipeDialog(recipe) }, // Ver solo lectura
+            onEditClick = { recipe -> showRecipeDialog(recipe) },      // Editar
+            onDeleteClick = { recipe -> showDeleteConfirmationDialog(recipe) } // Borrar
         )
 
         binding.recyclerViewRecipesOriginal.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewRecipesOriginal.adapter = adapter
 
+        // Boton flotante "+" para crear una nueva receta
         binding.addTaskButton.setOnClickListener {
             showRecipeDialog()
         }
@@ -58,6 +61,7 @@ class OriginalRecipesFragment : Fragment() {
         loadRecipes()
     }
 
+    // Consulta las recetas propias en SQLite y actualiza el RecyclerView o el estado vacio
     private fun loadRecipes() {
         recipeList = recipeDAO.findAllMyRecipes()
         adapter.updateData(recipeList)
@@ -71,6 +75,7 @@ class OriginalRecipesFragment : Fragment() {
         }
     }
 
+    // Muestra un dialogo en modo solo lectura al pulsar sobre una receta propia
     private fun showViewRecipeDialog(recipe: MyRecipe) {
         val dialogBinding = DialogAddRecipeBinding.inflate(layoutInflater)
 
@@ -78,6 +83,7 @@ class OriginalRecipesFragment : Fragment() {
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
 
+        // Bloqueamos la edicion para que no se pueda modificar ni abrir el teclado
         dialogBinding.nameEditText.isFocusable = false
         dialogBinding.nameEditText.isFocusableInTouchMode = false
         dialogBinding.nameEditText.keyListener = null
@@ -93,10 +99,12 @@ class OriginalRecipesFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(recipe.name)
             .setView(dialogBinding.root)
+            .setCancelable(false) // Evita que se cierre al pulsar fuera
             .setPositiveButton(R.string.btn_close) { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
+    // Muestra el dialogo para crear una receta nueva o editar una existente
     private fun showRecipeDialog(recipe: MyRecipe = MyRecipe(id = -1, name = "", ingredients = "", instructions = "")) {
         val dialogBinding = DialogAddRecipeBinding.inflate(layoutInflater)
 
@@ -109,12 +117,14 @@ class OriginalRecipesFragment : Fragment() {
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(dialogTitle)
             .setView(dialogBinding.root)
+            .setCancelable(false) // Evita que se cierre al pulsar fuera
             .setPositiveButton(R.string.btn_save) { _, _ -> }
             .setNegativeButton(R.string.btn_cancel) { dialog, _ -> dialog.dismiss() }
 
         val dialog = builder.create()
         dialog.show()
 
+        // Validamos que el nombre no este vacio antes de guardar en SQLite
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val name = dialogBinding.nameEditText.text.toString().trim()
             val ingredients = dialogBinding.ingredientsEditText.text.toString().trim()
@@ -127,17 +137,19 @@ class OriginalRecipesFragment : Fragment() {
                 recipe.ingredients = ingredients
                 recipe.instructions = instructions
 
-                recipeDAO.save(recipe)
+                recipeDAO.save(recipe) // Inserta o actualiza en SQLite
                 dialog.dismiss()
                 loadRecipes()
             }
         }
     }
 
+    // Muestra una alerta de confirmacion antes de borrar la receta de SQLite
     private fun showDeleteConfirmationDialog(recipe: MyRecipe) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_delete_title)
             .setMessage(getString(R.string.dialog_delete_message, recipe.name))
+            .setCancelable(false) // Evita que se cierre al pulsar fuera
             .setPositiveButton(R.string.btn_delete) { dialog, _ ->
                 recipeDAO.delete(recipe)
                 loadRecipes()

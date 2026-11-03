@@ -28,11 +28,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // 1. Configurar ViewPager2 y Adaptador
+        // Configuramos la barra superior (Toolbar) como ActionBar oficial
+        setSupportActionBar(binding.toolbar)
+
+        // Conectamos el adaptador de pestañas deslizables con el contenedor
         val pagerAdapter = MainPagerAdapter(this)
         binding.viewPager.adapter = pagerAdapter
 
-        // 2. Al tocar icono en la barra -> cambiar ViewPager2
+        // Cambiamos de pantalla al pulsar los iconos de la barra inferior
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
@@ -51,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 3. Al deslizar la pantalla (Swipe) -> actualizar icono seleccionado
+        // Seleccionamos el icono correspondiente al deslizar con el dedo
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // 4. Controlar botón "Atrás" (Atrás regresa siempre a la pestaña 0 / Home)
+        // Al pulsar el boton atras regresa a la pantalla principal antes de salir
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.viewPager.currentItem != 0) {

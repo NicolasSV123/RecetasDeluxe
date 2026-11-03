@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+// Fragment encargado de mostrar las recetas marcadas como favoritas
 class FavoriteFragment : Fragment() {
 
     private var _binding: ActivityFavoriteBinding? = null
@@ -38,8 +39,10 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Inicializamos el DAO de SQLite para consultar los IDs favoritos
         recipeDAO = RecipeDAO(requireContext())
 
+        // Configuramos el adaptador para abrir el detalle al pulsar una receta favorita
         adapter = RecipeAdapter(favoriteRecipes) { recipe ->
             val intent = Intent(requireContext(), DetailActivity::class.java)
             intent.putExtra(DetailActivity.EXTRA_RECIPE, recipe.id)
@@ -49,25 +52,30 @@ class FavoriteFragment : Fragment() {
         binding.recyclerViewFavorites.adapter = adapter
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
 
+        // Si la lista esta vacia y pulsan "Buscala!", redirigimos a la pestaña de Inicio
         binding.emptySubtitleTextView.setOnClickListener {
             val mainActivity = activity as? MainActivity
             mainActivity?.navigateToHome()
         }
     }
 
+    // Cada vez que volvemos a esta pestaña, recargamos los favoritos de SQLite
     override fun onResume() {
         super.onResume()
         loadFavorites()
     }
 
+    // Funcion que lee los IDs de SQLite y filtra las recetas de la API
     private fun loadFavorites() {
         val favoriteIds = recipeDAO.findAllFavoriteIds()
 
+        // Si no hay favoritos guardados, mostramos el mensaje de aviso y ocultamos la lista
         if (favoriteIds.isEmpty()) {
             binding.emptyStateLayout.visibility = View.VISIBLE
             binding.recyclerViewFavorites.visibility = View.GONE
             adapter.updateData(emptyList())
         } else {
+            // Si hay favoritos, descargamos las recetas de la API y filtramos solo las marcadas
             val api = RecipesAPI.getInstance()
             CoroutineScope(Dispatchers.IO).launch {
                 val allRecipes = api.getRecipesList().recipes

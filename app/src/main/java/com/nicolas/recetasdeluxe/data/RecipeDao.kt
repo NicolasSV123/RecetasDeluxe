@@ -19,9 +19,7 @@ class RecipeDAO(val context: Context) {
         db.close()
     }
 
-    // ==========================================
-    // SECCIÓN 1: RECETAS PROPIAS (MyRecipe)
-    // ==========================================
+    // Gestion de Recetas Propias
 
     fun getContentValues(recipe: MyRecipe): ContentValues {
         val values = ContentValues()
@@ -145,9 +143,7 @@ class RecipeDAO(val context: Context) {
         return recipeList
     }
 
-    // ==========================================
-    // SECCIÓN 2: FAVORITOS (IDs de la API)
-    // ==========================================
+    // Gestion de Favoritos
 
     fun insertFavorite(recipeId: Int) {
         open()
