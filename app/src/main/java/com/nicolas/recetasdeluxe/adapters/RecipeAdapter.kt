@@ -1,11 +1,13 @@
 package com.nicolas.recetasdeluxe.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
+import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.databinding.ItemRecipeBinding
 import com.nicolas.recetasdeluxe.utils.RecipeDiffUtil
 import com.squareup.picasso.Picasso
@@ -24,6 +26,7 @@ class RecipeAdapter(
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = items[position]
         holder.render(recipe)
+
         holder.binding.recipeCard.setOnClickListener {
             onItemClick(recipe)
         }
@@ -50,6 +53,15 @@ class RecipeViewHolder(val binding: ItemRecipeBinding) : RecyclerView.ViewHolder
 
         val totalTimeMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes
         binding.timeChip.text = context.getString(R.string.recipe_time, totalTimeMinutes)
+
+        val recipeDAO = RecipeDAO(context)
+        val isFav = recipeDAO.isFavorite(recipe.id)
+        if (isFav) {
+            binding.favoriteImageView.visibility = View.VISIBLE
+            binding.favoriteImageView.setImageResource(R.drawable.ic_favorite_added)
+        } else {
+            binding.favoriteImageView.visibility = View.GONE
+        }
 
         Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
     }

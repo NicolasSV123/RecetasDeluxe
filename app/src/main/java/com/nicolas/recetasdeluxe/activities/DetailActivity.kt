@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
+import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.data.RecipesAPI
 import com.nicolas.recetasdeluxe.databinding.ActivityDetailBinding
 import com.squareup.picasso.Picasso
@@ -25,6 +26,9 @@ class DetailActivity: AppCompatActivity() {
 
     lateinit var binding: ActivityDetailBinding
     lateinit var recipe: Recipe
+    private lateinit var recipeDAO: RecipeDAO
+    private var favoriteMenuItem: MenuItem? = null
+    private var isFavorite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,8 @@ class DetailActivity: AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        recipeDAO = RecipeDAO(this)
+
         val id = intent.getIntExtra(EXTRA_RECIPE, -1)
         val api = RecipesAPI.getInstance()
         CoroutineScope(Dispatchers.IO).launch{
@@ -51,6 +57,8 @@ class DetailActivity: AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_detail_menu, menu)
+        favoriteMenuItem = menu.findItem(R.id.menu_favorite)
+        updateFavoriteIcon()
         return true
     }
 
@@ -60,16 +68,37 @@ class DetailActivity: AppCompatActivity() {
                 finish()
                 return true
             }
+            R.id.menu_favorite -> {
+                if (::recipe.isInitialized) {
+                    if (isFavorite) {
+                        recipeDAO.deleteFavorite(recipe.id)
+                        isFavorite = false
+                    } else {
+                        recipeDAO.insertFavorite(recipe.id)
+                        isFavorite = true
+                    }
+                    updateFavoriteIcon()
+                }
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun updateFavoriteIcon() {
+        favoriteMenuItem?.setIcon(
+            if (isFavorite) R.drawable.ic_favorite_added else R.drawable.ic_favorite_empty
+        )
     }
 
     fun loadData(){
         supportActionBar?.title = recipe.name
 
+        // Comprobar si esta receta es favorita en SQLite
+        isFavorite = recipeDAO.isFavorite(recipe.id)
+        updateFavoriteIcon()
+
         Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
-
-
 
         binding.prepTimeMinutesChip.text = getString(R.string.preparation_minutes, recipe.prepTimeMinutes)
         binding.cookTimeMinutesChip.text = getString(R.string.cook_minutes, recipe.cookTimeMinutes)
@@ -86,7 +115,7 @@ class DetailActivity: AppCompatActivity() {
 
         binding.youtubeButton.setOnClickListener {
             val query = "${recipe.name} recipes"
-            val encodedQuery = android.net.Uri.encode(query)
+            val encodedQuery = Uri.encode(query)
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("https://www.youtube.com/results?search_query=$encodedQuery")
@@ -95,7 +124,7 @@ class DetailActivity: AppCompatActivity() {
         }
         binding.googleButton.setOnClickListener {
             val query = "${recipe.name} recipes"
-            val encodedQuery = android.net.Uri.encode(query)
+            val encodedQuery = Uri.encode(query)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$encodedQuery"))
             startActivity(intent)
         }

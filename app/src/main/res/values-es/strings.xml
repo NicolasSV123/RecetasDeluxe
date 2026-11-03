@@ -10,6 +10,29 @@
     <string name="preparation_time">Tiempo de preparación:</string>
     <string name="preparation_minutes">%1$d minutos🔨</string>
     <string name="cook_minutes">%1$d minutos🔥</string>
-    <string name="energy_value">Energy value and portions per person:\n</string>
-    <string name="details">Detalles</string>"
+    <string name="energy_value">Valor energético y porciones por persona:\n</string>
+    <string name="details">Detalles</string>
+
+    <!-- Recetas Propias -->
+    <string name="empty_title">¿Estás inspirado?</string>
+    <string name="empty_subtitle">¡Escribe tu receta!</string>
+    <string name="add_recipe_content_description">Añadir receta</string>
+    <string name="dialog_new_recipe">Nueva receta</string>
+    <string name="dialog_edit_recipe">Editar receta</string>
+    <string name="hint_recipe_name">Nombre del plato</string>
+    <string name="hint_ingredients">Ingredientes</string>
+    <string name="hint_instructions">Instrucciones</string>
+    <string name="dialog_delete_title">Eliminar receta</string>
+    <string name="dialog_delete_message">¿Estás seguro de que deseas eliminar \"%1$s\"?</string>
+    <string name="btn_save">Guardar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="btn_close">Cerrar</string>
+    <string name="toast_recipe_saved">Receta guardada</string>
+    <string name="toast_recipe_deleted">Receta eliminada</string>
+    <string name="error_empty_name">No se pueden crear recetas vacías</string>
+
+    <!-- Favoritos -->
+    <string name="empty_favorite_title">¿No tienes ninguna receta favorita?</string>
+    <string name="empty_favorite_subtitle">¡Búscala!</string>
 </resources>

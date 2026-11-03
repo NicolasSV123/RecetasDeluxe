@@ -10,5 +10,28 @@
     <string name="preparation_minutes">%1$d minutes🔨</string>
     <string name="cook_minutes">%1$d minutes🔥</string>
     <string name="energy_value">Energy value and portions per person:\n</string>
-    <string name="details">Details</string>"
+    <string name="details">Details</string>
+
+    <!-- Original Recipes -->
+    <string name="empty_title">Feeling inspired?</string>
+    <string name="empty_subtitle">Write your recipe!</string>
+    <string name="add_recipe_content_description">Add recipe</string>
+    <string name="dialog_new_recipe">New recipe</string>
+    <string name="dialog_edit_recipe">Edit recipe</string>
+    <string name="hint_recipe_name">Dish name</string>
+    <string name="hint_ingredients">Ingredients</string>
+    <string name="hint_instructions">Instructions</string>
+    <string name="dialog_delete_title">Delete recipe</string>
+    <string name="dialog_delete_message">Are you sure you want to delete \"%1$s\"?</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_close">Close</string>
+    <string name="toast_recipe_saved">Recipe saved</string>
+    <string name="toast_recipe_deleted">Recipe deleted</string>
+    <string name="error_empty_name">Cannot create empty recipes</string>
+
+    <!-- Favorites -->
+    <string name="empty_favorite_title">Don\'t have any favorite recipes?</string>
+    <string name="empty_favorite_subtitle">Search for one!</string>
 </resources>

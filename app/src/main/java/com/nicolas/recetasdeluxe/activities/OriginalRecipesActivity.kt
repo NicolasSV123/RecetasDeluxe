@@ -88,8 +88,10 @@ class OriginalRecipesActivity : AppCompatActivity() {
         adapter.updateData(recipeList)
 
         if (recipeList.isEmpty()) {
+            binding.emptyStateLayout.visibility = View.VISIBLE
             binding.recyclerViewRecipesOriginal.visibility = View.GONE
         } else {
+            binding.emptyStateLayout.visibility = View.GONE
             binding.recyclerViewRecipesOriginal.visibility = View.VISIBLE
         }
     }
@@ -102,15 +104,23 @@ class OriginalRecipesActivity : AppCompatActivity() {
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
 
-        // Deshabilitar la edición
-        dialogBinding.nameEditText.isEnabled = false
-        dialogBinding.ingredientsEditText.isEnabled = false
-        dialogBinding.instructionsEditText.isEnabled = false
+        // Bloquear edición manteniendo el texto oscuro
+        dialogBinding.nameEditText.isFocusable = false
+        dialogBinding.nameEditText.isFocusableInTouchMode = false
+        dialogBinding.nameEditText.keyListener = null
+
+        dialogBinding.ingredientsEditText.isFocusable = false
+        dialogBinding.ingredientsEditText.isFocusableInTouchMode = false
+        dialogBinding.ingredientsEditText.keyListener = null
+
+        dialogBinding.instructionsEditText.isFocusable = false
+        dialogBinding.instructionsEditText.isFocusableInTouchMode = false
+        dialogBinding.instructionsEditText.keyListener = null
 
         MaterialAlertDialogBuilder(this)
             .setTitle(recipe.name)
             .setView(dialogBinding.root)
-            .setPositiveButton("Cerrar") { dialog, _ ->
+            .setPositiveButton(R.string.btn_close) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -124,13 +134,13 @@ class OriginalRecipesActivity : AppCompatActivity() {
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
 
-        val dialogTitle = if (recipe.id == -1) "Nueva receta" else "Editar receta"
+        val dialogTitle = if (recipe.id == -1) getString(R.string.dialog_new_recipe) else getString(R.string.dialog_edit_recipe)
 
         val builder = MaterialAlertDialogBuilder(this)
             .setTitle(dialogTitle)
             .setView(dialogBinding.root)
-            .setPositiveButton("Guardar") { _, _ -> }
-            .setNegativeButton("Cancelar") { dialog, _ ->
+            .setPositiveButton(R.string.btn_save) { _, _ -> }
+            .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -143,7 +153,7 @@ class OriginalRecipesActivity : AppCompatActivity() {
             val instructions = dialogBinding.instructionsEditText.text.toString().trim()
 
             if (name.isEmpty()) {
-                dialogBinding.nameTextField.error = "No se pueden crear recetas vacías"
+                dialogBinding.nameTextField.error = getString(R.string.error_empty_name)
             } else {
                 recipe.name = name
                 recipe.ingredients = ingredients
@@ -158,15 +168,15 @@ class OriginalRecipesActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmationDialog(recipe: MyRecipe) {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Eliminar receta")
-            .setMessage("¿Estás seguro de que deseas eliminar \"${recipe.name}\"?")
-            .setPositiveButton("Eliminar") { dialog, _ ->
+            .setTitle(R.string.dialog_delete_title)
+            .setMessage(getString(R.string.dialog_delete_message, recipe.name))
+            .setPositiveButton(R.string.btn_delete) { dialog, _ ->
                 recipeDAO.delete(recipe)
                 loadRecipes()
-                Toast.makeText(this, "Receta eliminada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_recipe_deleted, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
+            .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
