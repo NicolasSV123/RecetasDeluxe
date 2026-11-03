@@ -1,14 +1,14 @@
-package com.nicolas.recetasdeluxe.activities
+package com.nicolas.recetasdeluxe.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nicolas.recetasdeluxe.R
+import com.nicolas.recetasdeluxe.activities.DetailActivity
+import com.nicolas.recetasdeluxe.activities.MainActivity
 import com.nicolas.recetasdeluxe.adapters.RecipeAdapter
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipeDAO
@@ -18,59 +18,40 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FavoriteActivity : AppCompatActivity() {
+class FavoriteFragment : Fragment() {
 
-    private lateinit var binding: ActivityFavoriteBinding
+    private var _binding: ActivityFavoriteBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var recipeDAO: RecipeDAO
     private lateinit var adapter: RecipeAdapter
     private var favoriteRecipes: List<Recipe> = emptyList()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityFavoriteBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityFavoriteBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        recipeDAO = RecipeDAO(requireContext())
 
-        recipeDAO = RecipeDAO(this)
-
-        // 1. Configuramos el RecyclerView reutilizando RecipeAdapter
         adapter = RecipeAdapter(favoriteRecipes) { recipe ->
-            val intent = Intent(this, DetailActivity::class.java)
+            val intent = Intent(requireContext(), DetailActivity::class.java)
             intent.putExtra(DetailActivity.EXTRA_RECIPE, recipe.id)
             startActivity(intent)
         }
 
         binding.recyclerViewFavorites.adapter = adapter
-        binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
 
-        // 2. Al pulsar el texto "¡Búscala!" redirige a inicio
         binding.emptySubtitleTextView.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
-        // 3. Barra de navegación inferior
-        binding.bottomNavigationView.selectedItemId = R.id.menu_favorite
-
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.menu_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    true
-                }
-                R.id.menu_favorite -> true
-                R.id.menu_add_recipe -> {
-                    startActivity(Intent(this, OriginalRecipesActivity::class.java))
-                    true
-                }
-                else -> false
-            }
+            val mainActivity = activity as? MainActivity
+            mainActivity?.navigateToHome()
         }
     }
 
@@ -104,5 +85,10 @@ class FavoriteActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

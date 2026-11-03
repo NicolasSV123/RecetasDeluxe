@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.nicolas.recetasdeluxe.R
@@ -86,9 +87,11 @@ class DetailActivity: AppCompatActivity() {
     }
 
     private fun updateFavoriteIcon() {
-        favoriteMenuItem?.setIcon(
-            if (isFavorite) R.drawable.ic_favorite_added else R.drawable.ic_favorite_empty
-        )
+        favoriteMenuItem?.let { item ->
+            val iconRes = if (isFavorite) R.drawable.ic_favorite_added else R.drawable.ic_favorite_empty
+            item.setIcon(iconRes)
+            item.icon?.setTint(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
+        }
     }
 
     fun loadData(){

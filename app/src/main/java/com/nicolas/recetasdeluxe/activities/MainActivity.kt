@@ -1,32 +1,19 @@
 package com.nicolas.recetasdeluxe.activities
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.nicolas.recetasdeluxe.R
-import com.nicolas.recetasdeluxe.adapters.RecipeAdapter
-import com.nicolas.recetasdeluxe.data.Recipe
-import com.nicolas.recetasdeluxe.data.RecipesAPI
+import com.nicolas.recetasdeluxe.adapters.MainPagerAdapter
 import com.nicolas.recetasdeluxe.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-
-    lateinit var adapter: RecipeAdapter
-
-    var recipeList: List<Recipe> = emptyList()
-
-    var filteredRecipeList: List<Recipe> = emptyList()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,77 +27,57 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        //Barra de navegacion inferior
-        // Marcamos como activo el icono de Inicio
-        binding.bottomNavigationView.selectedItemId = R.id.menu_home
 
+        // 1. Configurar ViewPager2 y Adaptador
+        val pagerAdapter = MainPagerAdapter(this)
+        binding.viewPager.adapter = pagerAdapter
+
+        // 2. Al tocar icono en la barra -> cambiar ViewPager2
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.menu_home -> true // Ya estamos aquí
+                R.id.menu_home -> {
+                    binding.viewPager.currentItem = 0
+                    true
+                }
                 R.id.menu_favorite -> {
-                    startActivity(Intent(this, FavoriteActivity::class.java))
+                    binding.viewPager.currentItem = 1
                     true
                 }
                 R.id.menu_add_recipe -> {
-                    startActivity(Intent(this, OriginalRecipesActivity::class.java))
+                    binding.viewPager.currentItem = 2
                     true
                 }
                 else -> false
             }
         }
 
-        adapter = RecipeAdapter(recipeList) { recipe ->
-            val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.EXTRA_RECIPE, recipe.id)
-            startActivity(intent)
-        }
-
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-
-        val api = RecipesAPI.getInstance()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            recipeList = api.getRecipesList().recipes
-            filteredRecipeList = recipeList
-
-            CoroutineScope(Dispatchers.Main).launch {
-                adapter.updateData(recipeList)
-                showData()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (::adapter.isInitialized) {
-            adapter.notifyDataSetChanged()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.activity_main_menu, menu)
-
-        val searchMenuItem = menu.findItem(R.id.menu_search)
-        val searchView = searchMenuItem.actionView as SearchView
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                filteredRecipeList = recipeList.filter {
-                    it.name.contains(newText, true)
+        // 3. Al deslizar la pantalla (Swipe) -> actualizar icono seleccionado
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                binding.bottomNavigationView.selectedItemId = when (position) {
+                    0 -> R.id.menu_home
+                    1 -> R.id.menu_favorite
+                    2 -> R.id.menu_add_recipe
+                    else -> R.id.menu_home
                 }
-                showData()
-                return true
             }
         })
-        return true
+
+        // 4. Controlar botón "Atrás" (Atrás regresa siempre a la pestaña 0 / Home)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.viewPager.currentItem != 0) {
+                    binding.viewPager.currentItem = 0
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
-    fun showData(){
-        adapter.updateData(filteredRecipeList)
+    fun navigateToHome() {
+        binding.viewPager.currentItem = 0
     }
 }

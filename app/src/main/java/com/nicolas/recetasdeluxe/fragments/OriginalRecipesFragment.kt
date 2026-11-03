@@ -1,14 +1,12 @@
-package com.nicolas.recetasdeluxe.activities
+package com.nicolas.recetasdeluxe.fragments
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nicolas.recetasdeluxe.R
@@ -18,69 +16,46 @@ import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.databinding.ActivityOriginalRecipesBinding
 import com.nicolas.recetasdeluxe.databinding.DialogAddRecipeBinding
 
-class OriginalRecipesActivity : AppCompatActivity() {
+class OriginalRecipesFragment : Fragment() {
 
-    private lateinit var binding: ActivityOriginalRecipesBinding
+    private var _binding: ActivityOriginalRecipesBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var adapter: OriginalRecipeAdapter
     private lateinit var recipeDAO: RecipeDAO
     private var recipeList: List<MyRecipe> = emptyList()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityOriginalRecipesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityOriginalRecipesBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        recipeDAO = RecipeDAO(this)
+        recipeDAO = RecipeDAO(requireContext())
 
         adapter = OriginalRecipeAdapter(
             items = recipeList,
-            onItemClick = { recipe ->
-                // Modo solo lectura al pulsar el nombre / tarjeta
-                showViewRecipeDialog(recipe)
-            },
-            onEditClick = { recipe ->
-                // Modo edición al pulsar el botón del lápiz
-                showRecipeDialog(recipe)
-            },
-            onDeleteClick = { recipe ->
-                showDeleteConfirmationDialog(recipe)
-            }
+            onItemClick = { recipe -> showViewRecipeDialog(recipe) },
+            onEditClick = { recipe -> showRecipeDialog(recipe) },
+            onDeleteClick = { recipe -> showDeleteConfirmationDialog(recipe) }
         )
 
-        binding.recyclerViewRecipesOriginal.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewRecipesOriginal.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewRecipesOriginal.adapter = adapter
-
-        loadRecipes()
 
         binding.addTaskButton.setOnClickListener {
             showRecipeDialog()
         }
+    }
 
-        // 👇 CÓDIGO DEL BOTTOM NAVIGATION 👇
-        binding.bottomNavigationView.selectedItemId = R.id.menu_add_recipe
-
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.menu_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    true
-                }
-                R.id.menu_favorite -> {
-                    startActivity(Intent(this, FavoriteActivity::class.java))
-                    true
-                }
-                R.id.menu_add_recipe -> true
-                else -> false
-            }
-        }
+    override fun onResume() {
+        super.onResume()
+        loadRecipes()
     }
 
     private fun loadRecipes() {
@@ -96,7 +71,6 @@ class OriginalRecipesActivity : AppCompatActivity() {
         }
     }
 
-    // Diálogo de lectura (solo lectura)
     private fun showViewRecipeDialog(recipe: MyRecipe) {
         val dialogBinding = DialogAddRecipeBinding.inflate(layoutInflater)
 
@@ -104,7 +78,6 @@ class OriginalRecipesActivity : AppCompatActivity() {
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
 
-        // Bloquear edición manteniendo el texto oscuro
         dialogBinding.nameEditText.isFocusable = false
         dialogBinding.nameEditText.isFocusableInTouchMode = false
         dialogBinding.nameEditText.keyListener = null
@@ -117,16 +90,13 @@ class OriginalRecipesActivity : AppCompatActivity() {
         dialogBinding.instructionsEditText.isFocusableInTouchMode = false
         dialogBinding.instructionsEditText.keyListener = null
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(recipe.name)
             .setView(dialogBinding.root)
-            .setPositiveButton(R.string.btn_close) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton(R.string.btn_close) { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
-    // Diálogo para crear o editar
     private fun showRecipeDialog(recipe: MyRecipe = MyRecipe(id = -1, name = "", ingredients = "", instructions = "")) {
         val dialogBinding = DialogAddRecipeBinding.inflate(layoutInflater)
 
@@ -136,13 +106,11 @@ class OriginalRecipesActivity : AppCompatActivity() {
 
         val dialogTitle = if (recipe.id == -1) getString(R.string.dialog_new_recipe) else getString(R.string.dialog_edit_recipe)
 
-        val builder = MaterialAlertDialogBuilder(this)
+        val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(dialogTitle)
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.btn_save) { _, _ -> }
-            .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton(R.string.btn_cancel) { dialog, _ -> dialog.dismiss() }
 
         val dialog = builder.create()
         dialog.show()
@@ -167,18 +135,21 @@ class OriginalRecipesActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmationDialog(recipe: MyRecipe) {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_delete_title)
             .setMessage(getString(R.string.dialog_delete_message, recipe.name))
             .setPositiveButton(R.string.btn_delete) { dialog, _ ->
                 recipeDAO.delete(recipe)
                 loadRecipes()
-                Toast.makeText(this, R.string.toast_recipe_deleted, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.toast_recipe_deleted, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
-            .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton(R.string.btn_cancel) { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
