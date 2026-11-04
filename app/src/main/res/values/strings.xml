@@ -55,4 +55,22 @@
     <string name="toast_servings">Servings: %1$d</string>
     <string name="toast_cuisine">Cuisine: %1$s</string>
     <string name="toast_tag">Tag: %1$s</string>
+
+    <!-- Detail Screen -->
+    <string name="label_preparation">Preparation</string>
+    <string name="label_cooking">Cooking</string>
+    <string name="label_calories">Calories</string>
+    <string name="label_servings">Servings</string>
+    <string name="label_ingredients">Ingredients</string>
+    <string name="label_instructions">Instructions</string>
+    <string name="btn_youtube">YouTube</string>
+    <string name="btn_google">Google</string>
+    <string name="label_prep_time">Preparation time</string>
+    <string name="label_cook_time">Cooking time</string>
+    <string name="label_calories_title">Calories</string>
+    <string name="label_servings_title">Servings</string>
+    <string name="format_prep_time">%1$d minutes</string>
+    <string name="format_cook_time">%1$d minutes</string>
+    <string name="format_calories">%1$d kilocalories</string>
+    <string name="format_servings">%1$d persons</string>
 </resources>

@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    //Google ML Kit Translation
+    implementation("com.google.mlkit:translate:17.0.3")
 
     //Retrofit + Gson converter
     val retrofitVersion = "3.0.0"

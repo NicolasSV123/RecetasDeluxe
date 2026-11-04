@@ -126,7 +126,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Preparación"
+                            android:text="@string/label_prep_time"
                             android:textSize="12sp"
                             android:textColor="?android:attr/textColorSecondary" />
 
@@ -136,7 +136,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            tools:text="15 mins" />
+                            tools:text="15 minutos" />
 
                     </LinearLayout>
 
@@ -150,7 +150,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cocinado"
+                            android:text="@string/label_cook_time"
                             android:textSize="12sp"
                             android:textColor="?android:attr/textColorSecondary" />
 
@@ -160,7 +160,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            tools:text="20 mins" />
+                            tools:text="20 minutos" />
 
                     </LinearLayout>
 
@@ -174,7 +174,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Calorías"
+                            android:text="@string/label_calories_title"
                             android:textSize="12sp"
                             android:textColor="?android:attr/textColorSecondary" />
 
@@ -184,7 +184,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            tools:text="350 kcal" />
+                            tools:text="350 kilocalorías" />
 
                     </LinearLayout>
 
@@ -198,7 +198,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Porciones"
+                            android:text="@string/label_servings_title"
                             android:textSize="12sp"
                             android:textColor="?android:attr/textColorSecondary" />
 

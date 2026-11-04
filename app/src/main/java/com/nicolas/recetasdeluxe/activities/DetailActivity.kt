@@ -17,6 +17,7 @@ import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.data.RecipesAPI
 import com.nicolas.recetasdeluxe.databinding.ActivityDetailBinding
+import com.nicolas.recetasdeluxe.utils.RecipeTranslator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -120,28 +121,44 @@ class DetailActivity: AppCompatActivity() {
         binding.ratingTextView.text = "⭐ ${recipe.rating}"
         binding.reviewsTextView.text = "(${recipe.reviewCount} reseñas)"
 
-        binding.prepTimeMinutesChip.text = "${recipe.prepTimeMinutes} mins"
-        binding.cookTimeMinutesChip.text = "${recipe.cookTimeMinutes} mins"
-        binding.caloriesChip.text = "${recipe.caloriesPerServing} kcal"
-        binding.servingsChip.text = "${recipe.servings} pers."
+        binding.prepTimeMinutesChip.text = getString(R.string.format_prep_time, recipe.prepTimeMinutes)
+        binding.cookTimeMinutesChip.text = getString(R.string.format_cook_time, recipe.cookTimeMinutes)
+        binding.caloriesChip.text = getString(R.string.format_calories, recipe.caloriesPerServing)
+        binding.servingsChip.text = getString(R.string.format_servings, recipe.servings)
 
-        // Cargamos las etiquetas (Tags, Categoria/Cuisine y Tipo de comida/MealType) dinamicamente en chips
-        binding.tagsLayout.removeAllViews()
-        val allTags = recipe.tags + recipe.mealType + listOf(recipe.cuisine)
-        for (tag in allTags.distinct()) {
-            if (tag.isNotBlank()) {
-                val chip = Chip(this).apply {
-                    text = tag
-                    isClickable = false
-                    isCheckable = false
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        marginEnd = 16
+        val translator = RecipeTranslator()
+
+        translator.translateList(recipe.ingredients) { translatedIngredients ->
+            binding.ingredientsTextView.text = translatedIngredients.joinToString(separator = "\n") { ingredient ->
+                "• $ingredient"
+            }
+        }
+        translator.translateList(recipe.instructions) { translatedInstructions ->
+            binding.instructionsTextView.text = translatedInstructions.mapIndexed { index, instruction ->
+                "${index + 1}. $instruction"
+            }.joinToString(separator = "\n\n")
+        }
+
+        // Cargamos las etiquetas (Tags, Categoria/Cuisine y Tipo de comida/MealType) dinamicamente en chips traducidos
+        val originalTags = (recipe.tags + recipe.mealType + listOf(recipe.cuisine)).filter { it.isNotBlank() }.distinct()
+        translator.translateList(originalTags) { translatedTags ->
+            runOnUiThread {
+                binding.tagsLayout.removeAllViews()
+                for (tag in translatedTags) {
+                    val chip = Chip(this).apply {
+                        text = tag
+                        isClickable = false
+                        isCheckable = false
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            marginEnd = 16
+                        }
                     }
+                    binding.tagsLayout.addView(chip)
                 }
-                binding.tagsLayout.addView(chip)
+                translator.close()
             }
         }
 

@@ -22,11 +22,12 @@ import com.nicolas.recetasdeluxe.adapters.RecipeAdapter
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipesAPI
 import com.nicolas.recetasdeluxe.databinding.FragmentHomeBinding
+import com.nicolas.recetasdeluxe.utils.RecipeTranslator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Fragment encargado de mostrar el catalogo principal de recetas de la API con buscador y filtros dinamico
+// Fragment encargado de mostrar el catalogo principal de recetas de la API con buscador y filtros dinamicos traducidos
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -91,15 +92,21 @@ class HomeFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        // Descargamos las recetas de la API
+        // Descargamos las recetas de la API y las traducimos al idioma del dispositivo
         val api = RecipesAPI.getInstance()
         CoroutineScope(Dispatchers.IO).launch {
-            recipeList = api.getRecipesList().recipes
-            filteredRecipeList = recipeList
+            val rawRecipes = api.getRecipesList().recipes
 
-            CoroutineScope(Dispatchers.Main).launch {
-                adapter.updateData(recipeList)
-                showData()
+            val translator = RecipeTranslator()
+            translator.translateRecipes(rawRecipes) { translatedRecipes ->
+                recipeList = translatedRecipes
+                filteredRecipeList = recipeList
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.updateData(recipeList)
+                    showData()
+                    translator.close()
+                }
             }
         }
     }
@@ -133,25 +140,32 @@ class HomeFragment : Fragment() {
             .show()
     }
 
-    // Extrae y muestra dinamicamente todas las dificultades unicas de la API
+    // Extrae y traduce dinamicamente todas las dificultades unicas de la API al idioma del dispositivo
     private fun showDifficultyFilterDialog() {
-        val difficulties = recipeList.map { it.difficulty }.filter { it.isNotBlank() }.distinct().sorted().toTypedArray()
+        val originalDifficulties = recipeList.map { it.difficulty }.filter { it.isNotBlank() }.distinct().sorted()
 
-        if (difficulties.isEmpty()) {
+        if (originalDifficulties.isEmpty()) {
             Toast.makeText(requireContext(), R.string.no_difficulties_available, Toast.LENGTH_SHORT).show()
             return
         }
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.select_difficulty)
-            .setItems(difficulties) { _, which ->
-                val selectedDifficulty = difficulties[which]
-                filteredRecipeList = recipeList.filter { it.difficulty.equals(selectedDifficulty, true) }
-                showData()
-                Toast.makeText(requireContext(), getString(R.string.toast_difficulty, selectedDifficulty), Toast.LENGTH_SHORT).show()
+        val translator = RecipeTranslator()
+        translator.translateList(originalDifficulties) { translatedDifficulties ->
+            activity?.runOnUiThread {
+                val options = translatedDifficulties.toTypedArray()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.select_difficulty)
+                    .setItems(options) { _, which ->
+                        val selectedOriginal = originalDifficulties[which]
+                        filteredRecipeList = recipeList.filter { it.difficulty.equals(selectedOriginal, true) }
+                        showData()
+                        Toast.makeText(requireContext(), getString(R.string.toast_difficulty, options[which]), Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(R.string.btn_cancel, null)
+                    .show()
+                translator.close()
             }
-            .setNegativeButton(R.string.btn_cancel, null)
-            .show()
+        }
     }
 
     // Extrae y muestra dinamicamente todas las porciones unicas de la API
@@ -177,46 +191,60 @@ class HomeFragment : Fragment() {
             .show()
     }
 
-    // Extrae y muestra dinamicamente todas las cocinas unicas de la API
+    // Extrae y traduce dinamicamente todas las cocinas unicas de la API al idioma del dispositivo
     private fun showCuisineFilterDialog() {
-        val cuisines = recipeList.map { it.cuisine }.filter { it.isNotBlank() }.distinct().sorted().toTypedArray()
+        val originalCuisines = recipeList.map { it.cuisine }.filter { it.isNotBlank() }.distinct().sorted()
 
-        if (cuisines.isEmpty()) {
+        if (originalCuisines.isEmpty()) {
             Toast.makeText(requireContext(), R.string.no_cuisines_available, Toast.LENGTH_SHORT).show()
             return
         }
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.select_cuisine)
-            .setItems(cuisines) { _, which ->
-                val selectedCuisine = cuisines[which]
-                filteredRecipeList = recipeList.filter { it.cuisine.equals(selectedCuisine, true) }
-                showData()
-                Toast.makeText(requireContext(), getString(R.string.toast_cuisine, selectedCuisine), Toast.LENGTH_SHORT).show()
+        val translator = RecipeTranslator()
+        translator.translateList(originalCuisines) { translatedCuisines ->
+            activity?.runOnUiThread {
+                val options = translatedCuisines.toTypedArray()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.select_cuisine)
+                    .setItems(options) { _, which ->
+                        val selectedOriginal = originalCuisines[which]
+                        filteredRecipeList = recipeList.filter { it.cuisine.equals(selectedOriginal, true) }
+                        showData()
+                        Toast.makeText(requireContext(), getString(R.string.toast_cuisine, options[which]), Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(R.string.btn_cancel, null)
+                    .show()
+                translator.close()
             }
-            .setNegativeButton(R.string.btn_cancel, null)
-            .show()
+        }
     }
 
-    // Extrae y muestra dinamicamente todas las etiquetas unicas de la API
+    // Extrae y traduce dinamicamente todas las etiquetas unicas de la API al idioma del dispositivo
     private fun showTagFilterDialog() {
-        val tags = recipeList.flatMap { it.tags }.filter { it.isNotBlank() }.distinct().sorted().toTypedArray()
+        val originalTags = recipeList.flatMap { it.tags }.filter { it.isNotBlank() }.distinct().sorted()
 
-        if (tags.isEmpty()) {
+        if (originalTags.isEmpty()) {
             Toast.makeText(requireContext(), R.string.no_tags_available, Toast.LENGTH_SHORT).show()
             return
         }
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.select_tag)
-            .setItems(tags) { _, which ->
-                val selectedTag = tags[which]
-                filteredRecipeList = recipeList.filter { it.tags.contains(selectedTag) }
-                showData()
-                Toast.makeText(requireContext(), getString(R.string.toast_tag, selectedTag), Toast.LENGTH_SHORT).show()
+        val translator = RecipeTranslator()
+        translator.translateList(originalTags) { translatedTags ->
+            activity?.runOnUiThread {
+                val options = translatedTags.toTypedArray()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.select_tag)
+                    .setItems(options) { _, which ->
+                        val selectedOriginal = originalTags[which]
+                        filteredRecipeList = recipeList.filter { it.tags.contains(selectedOriginal) }
+                        showData()
+                        Toast.makeText(requireContext(), getString(R.string.toast_tag, options[which]), Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(R.string.btn_cancel, null)
+                    .show()
+                translator.close()
             }
-            .setNegativeButton(R.string.btn_cancel, null)
-            .show()
+        }
     }
 
     private fun showData() {
