@@ -35,4 +35,25 @@
     <!-- Favoritos -->
     <string name="empty_favorite_title">¿No tienes ninguna receta favorita?</string>
     <string name="empty_favorite_subtitle">¡Búscala!</string>
+
+    <!-- Filtros -->
+    <string name="filter_title">Filtrar recetas</string>
+    <string name="filter_all">Ver todas</string>
+    <string name="filter_by_difficulty">Filtrar por dificultad</string>
+    <string name="filter_by_servings">Filtrar por porciones</string>
+    <string name="filter_by_cuisine">Filtrar por cocina</string>
+    <string name="filter_by_tag">Filtrar por etiqueta</string>
+    <string name="select_difficulty">Seleccionar dificultad</string>
+    <string name="select_servings">Seleccionar porciones</string>
+    <string name="select_cuisine">Seleccionar cocina</string>
+    <string name="select_tag">Seleccionar etiqueta</string>
+    <string name="no_difficulties_available">No hay dificultades disponibles</string>
+    <string name="no_servings_available">No hay porciones disponibles</string>
+    <string name="no_cuisines_available">No hay cocinas disponibles</string>
+    <string name="no_tags_available">No hay etiquetas disponibles</string>
+    <string name="toast_showing_all">Mostrando todas</string>
+    <string name="toast_difficulty">Dificultad: %1$s</string>
+    <string name="toast_servings">Porciones: %1$d</string>
+    <string name="toast_cuisine">Cocina: %1$s</string>
+    <string name="toast_tag">Etiqueta: %1$s</string>
 </resources>

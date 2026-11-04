@@ -13,8 +13,13 @@ data class Recipe(
     @SerializedName("caloriesPerServing") val caloriesPerServing: Int,
     @SerializedName("servings") val servings: Int,
     @SerializedName("ingredients") val ingredients: List<String>,
-    @SerializedName("instructions") val instructions: List<String>
+    @SerializedName("instructions") val instructions: List<String>,
+    @SerializedName("tags") val tags: List<String> = emptyList(),
+    @SerializedName("mealType") val mealType: List<String> = emptyList(),
+    @SerializedName("rating") val rating: Double = 0.0,
+    @SerializedName("reviewCount") val reviewCount: Int = 0
 )
+
 data class RecipeResponse(
     @SerializedName("recipes") val recipes: List<Recipe>,
     @SerializedName("total") val total: Int,

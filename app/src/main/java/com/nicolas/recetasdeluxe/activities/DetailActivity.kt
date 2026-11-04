@@ -5,11 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.chip.Chip
 import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipeDAO
@@ -43,7 +45,11 @@ class DetailActivity: AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Configuramos el Toolbar personalizado como la barra de accion oficial
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = ""
 
         recipeDAO = RecipeDAO(this)
 
@@ -58,7 +64,7 @@ class DetailActivity: AppCompatActivity() {
         }
     }
 
-    // Inflamos el menu superior que contiene el icono del corazon de favoritos
+    // Inflamos el menu superior que contiene el icono de favoritos
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_detail_menu, menu)
         favoriteMenuItem = menu.findItem(R.id.menu_favorite)
@@ -102,6 +108,7 @@ class DetailActivity: AppCompatActivity() {
 
     // Rellenamos todos los componentes visuales con la informacion de la receta
     fun loadData(){
+        // Mostramos el nombre de la receta en la barra superior (Toolbar) y en el titulo principal
         supportActionBar?.title = recipe.name
 
         // Comprobamos en SQLite si esta receta ya es favorita
@@ -110,10 +117,33 @@ class DetailActivity: AppCompatActivity() {
 
         Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
 
-        binding.prepTimeMinutesChip.text = getString(R.string.preparation_minutes, recipe.prepTimeMinutes)
-        binding.cookTimeMinutesChip.text = getString(R.string.cook_minutes, recipe.cookTimeMinutes)
-        binding.caloriesChip.text = getString(R.string.recipe_calories, recipe.caloriesPerServing)
-        binding.servingsChip.text = getString(R.string.recipe_servings, recipe.servings)
+        binding.ratingTextView.text = "⭐ ${recipe.rating}"
+        binding.reviewsTextView.text = "(${recipe.reviewCount} reseñas)"
+
+        binding.prepTimeMinutesChip.text = "${recipe.prepTimeMinutes} mins"
+        binding.cookTimeMinutesChip.text = "${recipe.cookTimeMinutes} mins"
+        binding.caloriesChip.text = "${recipe.caloriesPerServing} kcal"
+        binding.servingsChip.text = "${recipe.servings} pers."
+
+        // Cargamos las etiquetas (Tags, Categoria/Cuisine y Tipo de comida/MealType) dinamicamente en chips
+        binding.tagsLayout.removeAllViews()
+        val allTags = recipe.tags + recipe.mealType + listOf(recipe.cuisine)
+        for (tag in allTags.distinct()) {
+            if (tag.isNotBlank()) {
+                val chip = Chip(this).apply {
+                    text = tag
+                    isClickable = false
+                    isCheckable = false
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        marginEnd = 16
+                    }
+                }
+                binding.tagsLayout.addView(chip)
+            }
+        }
 
         binding.ingredientsTextView.text = recipe.ingredients.joinToString(separator = "\n") { ingredient ->
             "• $ingredient"

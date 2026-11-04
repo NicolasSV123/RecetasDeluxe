@@ -34,4 +34,25 @@
     <!-- Favorites -->
     <string name="empty_favorite_title">Don\'t have any favorite recipes?</string>
     <string name="empty_favorite_subtitle">Search for one!</string>
+
+    <!-- Filter -->
+    <string name="filter_title">Filter recipes</string>
+    <string name="filter_all">Show all</string>
+    <string name="filter_by_difficulty">Filter by difficulty</string>
+    <string name="filter_by_servings">Filter by servings</string>
+    <string name="filter_by_cuisine">Filter by cuisine</string>
+    <string name="filter_by_tag">Filter by tag</string>
+    <string name="select_difficulty">Select difficulty</string>
+    <string name="select_servings">Select servings</string>
+    <string name="select_cuisine">Select cuisine</string>
+    <string name="select_tag">Select tag</string>
+    <string name="no_difficulties_available">No difficulties available</string>
+    <string name="no_servings_available">No servings available</string>
+    <string name="no_cuisines_available">No cuisines available</string>
+    <string name="no_tags_available">No tags available</string>
+    <string name="toast_showing_all">Showing all</string>
+    <string name="toast_difficulty">Difficulty: %1$s</string>
+    <string name="toast_servings">Servings: %1$d</string>
+    <string name="toast_cuisine">Cuisine: %1$s</string>
+    <string name="toast_tag">Tag: %1$s</string>
 </resources>
