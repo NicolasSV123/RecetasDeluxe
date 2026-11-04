@@ -26,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Fragment encargado de mostrar el catalogo principal de recetas de la API con buscador y filtros dinamicos
+// Fragment encargado de mostrar el catalogo principal de recetas de la API con buscador y filtros dinamico
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
