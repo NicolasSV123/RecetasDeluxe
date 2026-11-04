@@ -119,7 +119,7 @@ class DetailActivity: AppCompatActivity() {
         Picasso.get().load(recipe.image).into(binding.thumbnailImageView)
 
         binding.ratingTextView.text = "⭐ ${recipe.rating}"
-        binding.reviewsTextView.text = "(${recipe.reviewCount} reseñas)"
+        binding.reviewsTextView.text = getString(R.string.format_reviews, recipe.reviewCount)
 
         binding.prepTimeMinutesChip.text = getString(R.string.format_prep_time, recipe.prepTimeMinutes)
         binding.cookTimeMinutesChip.text = getString(R.string.format_cook_time, recipe.cookTimeMinutes)

@@ -73,4 +73,5 @@
     <string name="format_cook_time">%1$d minutes</string>
     <string name="format_calories">%1$d kilocalories</string>
     <string name="format_servings">%1$d persons</string>
+    <string name="format_reviews">(%1$d reviews)</string>
 </resources>
