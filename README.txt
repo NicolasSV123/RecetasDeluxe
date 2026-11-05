@@ -34,13 +34,17 @@ Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que 
   - Objeto de acceso a datos con metodos CRUD completos (insertar, actualizar, eliminar, consultar por ID y listar) para recetas propias y favoritos.
 
 --------------------------------------------------
-3. TRADUCCION AUTOMATICA (GOOGLE ML KIT)
+3. TRADUCCION AUTOMATICA Y UTILIDADES
 --------------------------------------------------
 
 - RecipeTranslator.kt (utils):
   - Detecta automaticamente el idioma del dispositivo mediante Locale.getDefault().language.
   - Utiliza Google ML Kit Translation para descargar e inicializar el modelo de traduccion en local/offline.
   - Traduce dinamicamente nombres de recetas, tipos de cocina, dificultades, etiquetas, ingredientes e instrucciones al idioma del telefono del usuario.
+
+- ImageUtils.kt (utils):
+  - Gestor de imagenes que lee los metadatos EXIF (mediante androidx.exifinterface) de fotos tomadas con la camara del telefono.
+  - Corrige y aplica automaticamente la rotacion vertical u horizontal correspondiente antes de renderizar la imagen con Picasso.
 
 --------------------------------------------------
 4. ESTRUCTURA DE ARCHIVOS Y CARPETAS
@@ -67,6 +71,7 @@ Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que 
     - DatabaseManager.kt
     - RecipeDiffUtil.kt
     - RecipeTranslator.kt
+    - ImageUtils.kt
 
 - res/
   - layout/
