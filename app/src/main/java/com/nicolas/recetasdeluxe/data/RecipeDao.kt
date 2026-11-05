@@ -26,6 +26,7 @@ class RecipeDAO(val context: Context) {
         values.put(MyRecipe.COLUMN_NAME, recipe.name)
         values.put(MyRecipe.COLUMN_INGREDIENTS, recipe.ingredients)
         values.put(MyRecipe.COLUMN_INSTRUCTIONS, recipe.instructions)
+        values.put(MyRecipe.COLUMN_IMAGE_URI, recipe.imageUri)
         return values
     }
 
@@ -34,7 +35,9 @@ class RecipeDAO(val context: Context) {
         val name = cursor.getString(cursor.getColumnIndexOrThrow(MyRecipe.COLUMN_NAME))
         val ingredients = cursor.getString(cursor.getColumnIndexOrThrow(MyRecipe.COLUMN_INGREDIENTS))
         val instructions = cursor.getString(cursor.getColumnIndexOrThrow(MyRecipe.COLUMN_INSTRUCTIONS))
-        return MyRecipe(id, name, ingredients, instructions)
+        val imageUriIndex = cursor.getColumnIndex(MyRecipe.COLUMN_IMAGE_URI)
+        val imageUri = if (imageUriIndex != -1) cursor.getString(imageUriIndex) ?: "" else ""
+        return MyRecipe(id, name, ingredients, instructions, imageUri)
     }
 
     fun save(recipe: MyRecipe) {

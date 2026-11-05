@@ -27,6 +27,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_delete">Delete</string>
     <string name="btn_close">Close</string>
+    <string name="btn_select_photo">Select photo</string>
     <string name="toast_recipe_saved">Recipe saved</string>
     <string name="toast_recipe_deleted">Recipe deleted</string>
     <string name="error_empty_name">Cannot create empty recipes</string>

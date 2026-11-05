@@ -2,7 +2,7 @@
 RECETAS DELUXE - DOCUMENTACION DEL PROYECTO
 ==================================================
 
-Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que permite explorar un catalogo de recetas internacionales desde una API REST, guardar tus recetas favoritas de forma local, crear y gestionar tus propias recetas personalizadas y traducirlas automaticamente al idioma del dispositivo.
+Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que permite explorar un catalogo de recetas internacionales desde una API REST, guardar tus recetas favoritas de forma local, crear y gestionar tus propias recetas personalizadas con fotos de la galeria y traducirlas automaticamente al idioma del dispositivo.
 
 --------------------------------------------------
 1. ARQUITECTURA Y NAVEGACION
@@ -16,7 +16,7 @@ Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que 
 - Pestañas Principales (Fragments):
   - HomeFragment.kt: Muestra el catalogo de recetas descargado de la API DummyJSON. Incluye buscador (SearchView) en tiempo real y menu de filtros dinamicos por Dificultad, Porciones, Cocina y Etiquetas.
   - FavoriteFragment.kt: Muestra unicamente las recetas marcadas como favoritas por el usuario. Si no hay favoritos, muestra una pantalla vacia informativa.
-  - OriginalRecipesFragment.kt: Permite crear, ver (modo solo lectura), editar y eliminar recetas propias personalizadas guardadas en SQLite local.
+  - OriginalRecipesFragment.kt: Permite crear, ver (modo solo lectura), editar y eliminar recetas propias personalizadas guardadas en SQLite local, permitiendo adjuntar fotos desde la galeria mediante GetContent() y permisos de lectura persistente.
 
 - Pantalla de Detalle:
   - DetailActivity.kt: Muestra la informacion completa de una receta seleccionada (imagen, titulo, valoracion con estrellas, contador de opiniones, chips de etiquetas/cocina/tipo de comida, metricas de preparacion, cocinado, calorias y porciones, ingredientes, instrucciones y botones de busqueda en YouTube y Google).
@@ -26,8 +26,8 @@ Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que 
 --------------------------------------------------
 
 - DatabaseManager.kt (utils):
-  - Hereda de SQLiteOpenHelper para crear y mantener la base de datos local RecetasDeluxe.db.
-  - Tabla my_recipes: Almacena las recetas propias del usuario (id, nombre, ingredientes e instrucciones).
+  - Hereda de SQLiteOpenHelper para crear y mantener la base de datos local RecetasDeluxe.db (Version 2).
+  - Tabla my_recipes: Almacena las recetas propias del usuario (id, nombre, ingredientes, instrucciones e image_uri).
   - Tabla favorite_recipes: Almacena de forma ligera los IDs numéricos de las recetas de la API marcadas como favoritas.
 
 - RecipeDAO.kt (data):
@@ -77,7 +77,7 @@ Recetas Deluxe es una aplicacion nativa para Android desarrollada en Kotlin que 
     - fragment_home.xml
     - item_recipe.xml
     - original_recipes.xml
-    - dialog_add_recipe.xml
+    - dialog_add_recipe.xml (Con ScrollView y selector de imagen)
   - values/ y values-es/
     - strings.xml (Recursos de texto traducidos al ingles y español)
     - themes.xml (Tema Material3 NoActionBar)

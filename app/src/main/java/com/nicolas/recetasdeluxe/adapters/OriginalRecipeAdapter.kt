@@ -3,8 +3,10 @@ package com.nicolas.recetasdeluxe.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.nicolas.recetasdeluxe.R
 import com.nicolas.recetasdeluxe.data.MyRecipe
 import com.nicolas.recetasdeluxe.databinding.OriginalRecipesBinding
+import com.nicolas.recetasdeluxe.utils.ImageUtils
 
 // Adaptador para mostrar la lista de recetas propias creadas por el usuario en el RecyclerView
 class OriginalRecipeAdapter(
@@ -55,5 +57,12 @@ class OriginalRecipeAdapter(
 class OriginalRecipeViewHolder(val binding: OriginalRecipesBinding) : RecyclerView.ViewHolder(binding.root) {
     fun render(recipe: MyRecipe) {
         binding.nameOriginalRecipeTextView.text = recipe.name
+
+        // Cargar la imagen respetando la orientacion vertical/horizontal EXIF
+        if (recipe.imageUri.isNotEmpty()) {
+            ImageUtils.loadOrientedImage(itemView.context, recipe.imageUri, binding.thumbnailImageView)
+        } else {
+            binding.thumbnailImageView.setImageResource(R.drawable.ic_launcher_background)
+        }
     }
 }

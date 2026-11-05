@@ -19,7 +19,8 @@ class DatabaseManager(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     }
 
     companion object {
-        const val DATABASE_VERSION = 1
+        // Incrementamos la version a 2 para actualizar la estructura con la columna de fotos
+        const val DATABASE_VERSION = 2
         const val DATABASE_NAME = "RecetasDeluxe.db"
 
         const val TABLE_FAVORITES = "favorite_recipes"

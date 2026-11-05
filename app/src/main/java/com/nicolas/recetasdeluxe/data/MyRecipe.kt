@@ -4,7 +4,8 @@ data class MyRecipe (
     val id: Int,
     var name: String,
     var ingredients: String,
-    var instructions: String
+    var instructions: String,
+    var imageUri: String = ""
 ) {
     companion object {
         const val TABLE_NAME = "my_recipes"
@@ -12,13 +13,15 @@ data class MyRecipe (
         const val COLUMN_NAME = "name"
         const val COLUMN_INGREDIENTS = "ingredients"
         const val COLUMN_INSTRUCTIONS = "instructions"
+        const val COLUMN_IMAGE_URI = "image_uri"
 
         const val SQL_CREATE_TABLE =
             "CREATE TABLE $TABLE_NAME (" +
                     "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMN_NAME TEXT," +
                     "$COLUMN_INGREDIENTS TEXT," +
-                    "$COLUMN_INSTRUCTIONS TEXT" +
+                    "$COLUMN_INSTRUCTIONS TEXT," +
+                    "$COLUMN_IMAGE_URI TEXT" +
                     ")"
 
         const val SQL_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"

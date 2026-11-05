@@ -28,6 +28,7 @@
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_delete">Eliminar</string>
     <string name="btn_close">Cerrar</string>
+    <string name="btn_select_photo">Seleccionar foto</string>
     <string name="toast_recipe_saved">Receta guardada</string>
     <string name="toast_recipe_deleted">Receta eliminada</string>
     <string name="error_empty_name">No se pueden crear recetas vacías</string>

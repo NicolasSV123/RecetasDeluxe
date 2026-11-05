@@ -1,10 +1,14 @@
 package com.nicolas.recetasdeluxe.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,8 +19,9 @@ import com.nicolas.recetasdeluxe.data.MyRecipe
 import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.databinding.ActivityOriginalRecipesBinding
 import com.nicolas.recetasdeluxe.databinding.DialogAddRecipeBinding
+import com.nicolas.recetasdeluxe.utils.ImageUtils
 
-// Fragment encargado de mostrar, crear, editar y borrar tus propias recetas locales
+// Fragment encargado de mostrar, crear, editar y borrar tus propias recetas locales con fotos
 class OriginalRecipesFragment : Fragment() {
 
     private var _binding: ActivityOriginalRecipesBinding? = null
@@ -25,6 +30,28 @@ class OriginalRecipesFragment : Fragment() {
     private lateinit var adapter: OriginalRecipeAdapter
     private lateinit var recipeDAO: RecipeDAO
     private var recipeList: List<MyRecipe> = emptyList()
+
+    // Variables para gestionar la seleccion de foto desde la galeria
+    private var selectedImageUri: String = ""
+    private var currentDialogImageView: ImageView? = null
+
+    // Lanzador de la galeria de Android para seleccionar imagen
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            try {
+                requireContext().contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // En versiones nuevas de Android no siempre es necesario
+            }
+            selectedImageUri = it.toString()
+            currentDialogImageView?.let { imageView ->
+                ImageUtils.loadOrientedImage(requireContext(), selectedImageUri, imageView)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +110,16 @@ class OriginalRecipesFragment : Fragment() {
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
 
+        // Cargar imagen guardada respetando la orientacion EXIF
+        if (recipe.imageUri.isNotEmpty()) {
+            ImageUtils.loadOrientedImage(requireContext(), recipe.imageUri, dialogBinding.recipeImageView)
+        } else {
+            dialogBinding.recipeImageView.setImageResource(R.drawable.ic_launcher_background)
+        }
+
+        // Ocultar boton de seleccionar foto en modo lectura
+        dialogBinding.selectPhotoButton.visibility = View.GONE
+
         // Bloqueamos la edicion para que no se pueda modificar ni abrir el teclado
         dialogBinding.nameEditText.isFocusable = false
         dialogBinding.nameEditText.isFocusableInTouchMode = false
@@ -90,7 +127,7 @@ class OriginalRecipesFragment : Fragment() {
 
         dialogBinding.ingredientsEditText.isFocusable = false
         dialogBinding.ingredientsEditText.isFocusableInTouchMode = false
-        dialogBinding.ingredientsEditText.keyListener = null
+        dialogBinding.instructionsEditText.keyListener = null
 
         dialogBinding.instructionsEditText.isFocusable = false
         dialogBinding.instructionsEditText.isFocusableInTouchMode = false
@@ -99,7 +136,7 @@ class OriginalRecipesFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(recipe.name)
             .setView(dialogBinding.root)
-            .setCancelable(false) // Evita que se cierre al pulsar fuera
+            .setCancelable(false)
             .setPositiveButton(R.string.btn_close) { dialog, _ -> dialog.dismiss() }
             .show()
     }
@@ -108,16 +145,30 @@ class OriginalRecipesFragment : Fragment() {
     private fun showRecipeDialog(recipe: MyRecipe = MyRecipe(id = -1, name = "", ingredients = "", instructions = "")) {
         val dialogBinding = DialogAddRecipeBinding.inflate(layoutInflater)
 
+        selectedImageUri = recipe.imageUri
         dialogBinding.nameEditText.setText(recipe.name)
         dialogBinding.ingredientsEditText.setText(recipe.ingredients)
         dialogBinding.instructionsEditText.setText(recipe.instructions)
+
+        // Cargar imagen existente o imagen por defecto
+        if (selectedImageUri.isNotEmpty()) {
+            ImageUtils.loadOrientedImage(requireContext(), selectedImageUri, dialogBinding.recipeImageView)
+        } else {
+            dialogBinding.recipeImageView.setImageResource(R.drawable.ic_launcher_background)
+        }
+
+        // Al pulsar "Seleccionar foto" abrimos la galeria del movil
+        dialogBinding.selectPhotoButton.setOnClickListener {
+            currentDialogImageView = dialogBinding.recipeImageView
+            pickImageLauncher.launch("image/*")
+        }
 
         val dialogTitle = if (recipe.id == -1) getString(R.string.dialog_new_recipe) else getString(R.string.dialog_edit_recipe)
 
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(dialogTitle)
             .setView(dialogBinding.root)
-            .setCancelable(false) // Evita que se cierre al pulsar fuera
+            .setCancelable(false)
             .setPositiveButton(R.string.btn_save) { _, _ -> }
             .setNegativeButton(R.string.btn_cancel) { dialog, _ -> dialog.dismiss() }
 
@@ -136,6 +187,7 @@ class OriginalRecipesFragment : Fragment() {
                 recipe.name = name
                 recipe.ingredients = ingredients
                 recipe.instructions = instructions
+                recipe.imageUri = selectedImageUri // Guardar la ruta de la foto seleccionada
 
                 recipeDAO.save(recipe) // Inserta o actualiza en SQLite
                 dialog.dismiss()
@@ -149,7 +201,7 @@ class OriginalRecipesFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_delete_title)
             .setMessage(getString(R.string.dialog_delete_message, recipe.name))
-            .setCancelable(false) // Evita que se cierre al pulsar fuera
+            .setCancelable(false)
             .setPositiveButton(R.string.btn_delete) { dialog, _ ->
                 recipeDAO.delete(recipe)
                 loadRecipes()
