@@ -8,17 +8,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nicolas.recetasdeluxe.activities.DetailActivity
-import com.nicolas.recetasdeluxe.activities.MainActivity
 import com.nicolas.recetasdeluxe.adapters.RecipeAdapter
 import com.nicolas.recetasdeluxe.data.Recipe
 import com.nicolas.recetasdeluxe.data.RecipeDAO
 import com.nicolas.recetasdeluxe.data.RecipesAPI
 import com.nicolas.recetasdeluxe.databinding.ActivityFavoriteBinding
+import com.nicolas.recetasdeluxe.utils.RecipeTranslator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Fragment encargado de mostrar las recetas marcadas como favoritas
+// Fragment encargado de mostrar las recetas marcadas como favoritas traducidas
 class FavoriteFragment : Fragment() {
 
     private var _binding: ActivityFavoriteBinding? = null
@@ -52,11 +52,7 @@ class FavoriteFragment : Fragment() {
         binding.recyclerViewFavorites.adapter = adapter
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
 
-        // Si la lista esta vacia y pulsan "Buscala!", redirigimos a la pestaña de Inicio
-        binding.emptySubtitleTextView.setOnClickListener {
-            val mainActivity = activity as? MainActivity
-            mainActivity?.navigateToHome()
-        }
+
     }
 
     // Cada vez que volvemos a esta pestaña, recargamos los favoritos de SQLite
@@ -65,7 +61,7 @@ class FavoriteFragment : Fragment() {
         loadFavorites()
     }
 
-    // Funcion que lee los IDs de SQLite y filtra las recetas de la API
+    // Funcion que lee los IDs de SQLite, filtra las recetas de la API y las traduce al idioma del telefono
     private fun loadFavorites() {
         val favoriteIds = recipeDAO.findAllFavoriteIds()
 
@@ -81,14 +77,21 @@ class FavoriteFragment : Fragment() {
                 val allRecipes = api.getRecipesList().recipes
                 val filteredFavorites = allRecipes.filter { favoriteIds.contains(it.id) }
 
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (filteredFavorites.isEmpty()) {
+                if (filteredFavorites.isEmpty()) {
+                    CoroutineScope(Dispatchers.Main).launch {
                         binding.emptyStateLayout.visibility = View.VISIBLE
                         binding.recyclerViewFavorites.visibility = View.GONE
-                    } else {
-                        binding.emptyStateLayout.visibility = View.GONE
-                        binding.recyclerViewFavorites.visibility = View.VISIBLE
-                        adapter.updateData(filteredFavorites)
+                    }
+                } else {
+                    // Traducimos las recetas favoritas al idioma del dispositivo antes de mostrarlas
+                    val translator = RecipeTranslator()
+                    translator.translateRecipes(filteredFavorites) { translatedFavorites ->
+                        CoroutineScope(Dispatchers.Main).launch {
+                            binding.emptyStateLayout.visibility = View.GONE
+                            binding.recyclerViewFavorites.visibility = View.VISIBLE
+                            adapter.updateData(translatedFavorites)
+                            translator.close()
+                        }
                     }
                 }
             }
